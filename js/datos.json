@@ -1,0 +1,11 @@
+{
+    "nombre":"Brian Roldan",
+    "edad":"23",
+    "booleano":"true",
+    "arreglo":["Soccer","MMA","Ciclismo"],
+    "objeto":{
+        "face":"Brian RN",
+        "Celular":"5511201210"
+    },
+    "nulo":null
+}

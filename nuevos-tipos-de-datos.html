@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Asíncronia en JavaScript</title>
+    </head>
+    <body>
+        <h1>Asíncronia en JavaScript</h1>
+        <script>
+            /*setTimeout(()=>{
+                console.log("setTimeout se ejecutara una vez cada tiempo expresado en milesegundos.");
+            },1000);
+            //set inverval-> Esto se repetira cada intervalo de tiempo.
+            setInterval(()=>{
+                console.log("setInterval se ejecuta cada intervalo de tiempo.");
+            },3000);
+
+
+            //Ejemplos
+                //Actualización de hora local
+            setInterval(()=>{
+                console.log(new Date().toLocaleTimeString());
+            },1000);
+
+            //Limpiar el setTimeOut y setInterval
+            let temporalizador=setTimeout(()=>{
+                console.log(new Date().toLocaleTimeString());
+            },1000);
+            clearTimeout(temporalizador);
+            let temporalizador2=setInterval(()=>{
+                console.log(new Date().toLocaleTimeString());
+            },1000);
+            clearInterval(temporalizador2);*/
+
+        //--------------------------------ASINCRONIA Y EL EVENT LOOP-------------------------------------
+        /*
+        Procedimiento Single thread y Multi thread: 
+            Son las unidades basicas de ejecucion de cada proceso que realiza la maquina 
+            (ver si trabajan en un solo hilo o multiples hilos).
+
+        Opereaciones de CPU y Operaciones de I/O:
+            Operaciones o procesos que haceleran el uso de memoria del navegador y asi mismo 
+            la del procesador, esto puede ser por demanda del programa o por un fallo o error
+            de lógica.
+
+        Operaciones Concurrentes y Paralelas.
+            Concurrencia: Cuando varias tareas van progresando al mismo tiempo.
+            Paralelismo: Las tareas se ejecutan al inicio.
+
+        Operaciones Bloqueantes y No Bloqueantes:
+            Se refiere a la fase de espera cada que se ejecuta una operación del código.
+            Bloqueante: No devuelbe el control a la aplicación hasta que haya terminado su tarea.
+            No bloqueante: Se ejecuta y devuelve el control sin importar si termino o no.
+
+        Operaciones Síncronas y Asíncronas:
+            Sincronas: La respuesta sucede en el tiempo inmediato.
+            Asincrono: La respuesta sucede a futuro, se ejecuta pero manda tiempo despues el resultado.
+
+        En JavaScript hay dos tipos de código
+        1. Código Sincrono bloqueante
+        2. Código Asincrono no bloqueante
+
+        JavaScript usa un modelo asíncrono y no bloqueante, con un loop de eventos implementado en un sólo
+        hilo,(sigle thread) para operaciones de entrada y salida(input/ouput).
+        */
+
+        //-------------------------------------CALLBACKS------------------------------------------------------
+        /* Mecanismo por excelencia de javaScript, esta es una función 
+        que se ejecuta despues de que otra lo haga.
+        
+       function cuadradoCallBack(value,callback){
+        setTimeout(()=>{
+            callback(value,value*value);
+        },Math.random()*1000);
+       }
+
+       cuadradoCallBack(0,(value,resultado)=>{
+        console.log("Inicio de callback");
+        console.log(`Callback: ${value}, Resultado: ${resultado}`);
+        cuadradoCallBack(1,(value,resultado)=>{
+            console.log(`Callback: ${value}, Resultado: ${resultado}`);
+            cuadradoCallBack(2,(value,resultado)=>{
+                console.log(`Callback: ${value}, Resultado: ${resultado}`);
+                cuadradoCallBack(3,(value,resultado)=>{
+                    console.log(`Callback: ${value}, Resultado: ${resultado}`);
+                    cuadradoCallBack(4,(value,resultado)=>{
+                        console.log(`Callback: ${value}, Resultado: ${resultado}`);
+                        cuadradoCallBack(5,(value,resultado)=>{
+                            console.log(`Callback: ${value}, Resultado: ${resultado}`);
+                        });
+                    });
+                });
+            });
+        });
+       });*/
+
+       //-------------------------------------------PROMESAS--------------------------------------------------
+       /*function cuadradoPromesa(value){
+        if (typeof value !== "number"){
+            return console.error(`El ${value} ingresado no es un número.`);
+        }
+
+        return new Promise((resuelve,rechaza)=>{
+            setTimeout(()=>{
+                resuelve({
+                    value:value,
+                    resultado:value*value
+                });
+            },Math.random()*1000);
+        });
+       }
+
+       cuadradoPromesa(0)
+       .then((obj)=>{
+        console.log("Incicio de la promesa");
+        console.log(`${obj.value}, ${obj.resultado}`);
+        return cuadradoPromesa(1);
+       })
+       .then(obj => {
+        console.log(`${obj.value}, ${obj.resultado}`);
+        return cuadradoPromesa(2);
+       })
+       .then(obj =>{
+        console.log(`${obj.value}, ${obj.resultado}`);
+        return cuadradoPromesa("3");
+       })
+       .then(obj=>{
+        console.log(`${obj.value}, ${obj.resultado}`);
+        return cuadradoPromesa(4);
+       })
+       .then(obj=>{
+        console.log(`${obj.value}, ${obj.resultado}`);
+        return cuadradoPromesa(5);
+       })
+       .catch(err=>err);
+
+       //---------------------------------------------------- ASYNC -AWAIT------------------------------------------------------------
+       function cuadradoPromesa(value){
+        if (typeof value !== "number"){
+            return console.error(`El ${value} ingresado no es un número.`);
+        }
+        return new Promise((resuelve,rechaza)=>{
+            setTimeout(()=>{
+                resuelve({
+                    value:value,
+                    resultado:value*value
+                });
+            },Math.random()*1000);
+        });
+       }
+       // FUNCIÓN ASINCRONA DECLARADA
+        async function funcionAsincronaDeclarada(){
+        try {
+            console.log("Inicio de Asincrona declarada");
+            let obj=await cuadradoPromesa(0);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj=await cuadradoPromesa(1);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj=await cuadradoPromesa(2);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+            
+            obj= await cuadradoPromesa(3);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj= await cuadradoPromesa("3");
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj= await cuadradoPromesa(5);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+            console.log("Fin función asincrona declarada.")
+        } catch (err) {
+            
+        }
+       }
+       funcionAsincronaDeclarada();
+
+       //FUNCIÓN ASINCRONA EXPRESADA
+       funcionAsincronaExpresada= async ()=>{
+        try {
+            let obj= await cuadradoPromesa(6);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj= await cuadradoPromesa(7);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj= await cuadradoPromesa("8");
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj= await cuadradoPromesa(9);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+
+            obj=await cuadradoPromesa(10);
+            console.log(`AsincromaDeclarada: ${obj.value}, resultado: ${obj.resultado}.`);
+            
+        } catch (err) {
+            
+        }
+       }
+       funcionAsincronaExpresada();*/
+       //-----------------------------------------SIMBOLOS (Symbols)------------------------------------------------
+       /*Symbol es un tipo de dato que reserva o declara un identificador unico de variable.
+       let id= Symbol();
+       let id2= Symbol(); 
+
+       console.log(id===id2);//false
+       console.log(id,id2);//Symbol() Symbol()
+       console.log(typeof id, typeof id2);//symbol symbol
+
+       //Declaraciones de Symbol en un objeto
+       const RAZA=Symbol();
+       const SONIDO=Symbol();
+
+       const perro={
+        [RAZA]:"pitbull"
+       }
+       console.log(perro);
+
+       perro.RAZA="Rotwailler";
+       console.log(perro);
+
+       perro[RAZA]="Dalmata";
+       console.log(perro);
+
+       perro[SONIDO]=function(){
+        console.log("wow wow");
+       }
+
+       console.log(perro[SONIDO]);
+       perro[SONIDO]();
+
+       for (let propiedad in perro){
+        console.log(propiedad);
+        console.log(perro[propiedad]);
+       }
+       console.log(Object.getOwnPropertySymbols(perro));*/
+
+       //-----------------------------------------------------SETS---------------------------------------------------------------
+       /*Es un metodo o arreglo mejorado que solo permite valores unicos.*/
+
+       //Formas de crear un set
+       /*const set=new Set([1,2,3,4,5,6,6,6,7,true,true,false,{},{}]);
+       console.log(set);
+
+       //Segunda forma
+       const nuevoSet=new Set();
+       nuevoSet.add("Hola");
+       nuevoSet.add(5);
+       nuevoSet.add("brian");
+       nuevoSet.add(10);
+       nuevoSet.add(false);
+       nuevoSet.add(false);
+       console.log(nuevoSet);
+
+       //Recorrer un set
+       for(let valor of set){
+        console.log(valor);
+       }
+       console.log("\n---------------------------------------------");
+
+       //otra forma
+       nuevoSet.forEach(item => {
+        console.log(item);
+       });
+       console.log("\n----------------------------------------------");
+
+       //Ver el tamaño del set
+       console.log(set.size);
+       console.log("\n----------------------------------------------");
+
+       //Ver si existe el elemeto dentro del set
+       console.log(set.has("Hola"));
+       console.log(nuevoSet.has("Hola"));
+       console.log("\n----------------------------------------------");
+       /*Para imprimir solo una posición del set se tiene que transformar el set a un Array ya que el set
+       es parecido a un arreglo pero no lo es.
+       let arreglo = Array.from(set);
+       //imprimir desde una posición del arreglo
+       console.log(arreglo);
+       console.log(arreglo[0]);
+       console.log(arreglo.length);
+       console.log("\n----------------------------------------------");
+       for(let i=0; i <=arreglo.length;i++){
+        console.log(arreglo[i]);
+       }*/
+       
+       //------------------------------------------------MAPS-----------------------------------------------------------------------
+       /*Son objetos que sirven para almacenar un conjunto de valores asociados a manera de objeto. 
+       (Muy parecido a un objeto primitivo) 
+       let mapa=new Map();
+       //Agregar valor a un MAP
+       mapa.set("nombre","Brian");
+       mapa.set("apellido","Roldan");
+       mapa.set("edad","23");
+       mapa.set("estatus","Soltero");
+
+       //Segunda forma
+       const mapa2=new Map([
+        ["nombre","Antonio"],
+        ["apellido","Espinosa"],
+        ["edad","43"],
+        ["estatus","casado"]
+       ]);
+
+       console.log(mapa);
+       console.log(mapa2);
+
+       //Ver si cuenta con el objeto o valor dentro de este
+       console.log(mapa.has("nombre"));
+       console.log(mapa.has("nacionalidad"));
+       //ver el tamaño del map
+       console.log(mapa.size);
+       //eliminar valores del mapa
+       mapa.delete("estatus");
+       console.log(mapa);
+       //obtener una determinada información del mapa
+       console.log(mapa.get("nombre"));
+
+       mapa.set("id",157894);
+
+       //Recorrer un mapa
+       for([key,value] of mapa){
+        console.log(`Clave: ${key}, Valor: ${value}`);
+       }
+
+       console.log("\n---------------------------------------");
+
+        for([key,value] of mapa2){
+            console.log(`Key: ${key}, Clave: ${value}`);
+        }
+
+        console.log("\n---------------------------------------");
+        //Destructuración 
+        const llavesMapas2=[...mapa2.keys()];
+        const valoresMapa2=[...mapa2.values()];
+
+        console.log(llavesMapas2);
+        console.log(valoresMapa2);*/
+
+        //---------------------------------------------------WeakSets & WeakMaps----------------------------------------------------
+        /* Hace referencia a que son debiles, hace referencia a que solo pueden almacenar referencias debiles
+        las llaves solo pueden ser de tipo objeto, esto permite al recolector de basura de JavaScript una vez se haya 
+        limpiado y ejecute su proceso y hace una mejora del rendimiento de la aplicación.
+        No permite limpiarze (.clear)
+        No permite medir su tamaño (.size)
+        No se pueden iterar.
+        WeakSets: Recibe una especie de arreglo basaso en valores debiles(tipo objeto)
+        WeakMaps: Especie de objeto debil que recibe objetos
+        
+       //Forma de crear o agregar valores a un weakSet
+       const wS= new WeakSet();
+
+       let valor1={"valor1":1};
+       let valor2={"valor2":2};
+       let valor3={"valor3":3};
+
+       wS.add(valor1);
+       wS.add(valor2);
+
+       console.log(wS);
+       //Ver si un elemento o valor se encuntra detro
+       console.log(wS.has(valor1));//true
+       console.log(wS.has(valor3));//false
+       //Eliminar un elemento
+       wS.delete(valor2);
+       console.log(wS);
+       //Agregar valores
+       wS.add(valor2);
+       wS.add(valor3);
+       console.log(wS);
+       //Mostrarlos por un intervalo de tiempo
+       setInterval(()=>{console.log(wS);},1000)
+       //Hasta que los valores sean null se limpiara la aplicación
+       //Igualando a null
+       setTimeout(()=>{
+        valor1=null;
+        valor2=null;
+        valor3=null;
+       },3000)
+
+       //--------WeakMap
+       //Forma de agregar valores a un weakMap
+       const wm= new WeakMap();
+
+       let obj1={};
+       let obj2={};
+       let obj3={};
+
+       wm.set(obj1,1);
+       wm.set(obj2,2);
+
+       console.log(wm);
+       //Ver si existe dentro del weakMap
+       console.log(wm.has(obj1));//true
+       console.log(wm.has(obj3));//false
+       //Eliminar un valor
+       wm.delete(obj2);
+       console.log(wm);
+       //Agregar
+       wm.set(obj2,2);
+       wm.set(obj3,3);
+       console.log(wm);
+       //Imprime por intervalo de tiempo
+       setInterval(()=>{console.log(wm);},1000)
+       //Igualar a null para que limpie la basura
+       setTimeout(()=>{
+        obj1=null;
+        obj2=null;
+        obj3=null;
+       },3000);*/
+
+       //-------------------------------------------------------Iterables & Iterators-----------------------------------------------------
+       /*Estructura de datos lineal que hace que se pueda recorrer elementos dentro de estos.
+       Iterables: Elemento que su recorrido se puede recorrer.
+       Iteradores: Apuntador que esta recorriendo los elementos.
+       
+      const iterable=[1,2,3,4,5,6,7,8];
+      const iterador=iterable[Symbol.iterator]();
+
+      console.log(iterable);
+      console.log(iterador);
+
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+
+      let siguiente=iterador.next();
+      
+      while(!siguiente.done){
+        console.log(siguiente.value);
+        siguiente = iterador.next();
+      }
+      
+      const iterable2=new Set(["h","o","l","a"]);
+      const iterador2=iterable2[Symbol.iterator]();
+
+      let next=iterador2.next();
+
+      while(!next.done){
+        console.log(next.value);
+        next=iterador2.next();
+      }*/
+      //-------------------------------------------------GENERATORS----------------------------------------------------------------
+      /*Un generador es una función iterable
+      
+      function* iterable(){
+        yield "Hola";
+        console.log("Consola");
+        yield "Hola Mundo";
+        console.log("Consola");
+        yield "Hola Brian";
+        console.log("Fin");
+      }
+
+      let iterador=iterable();
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+      //console.log(iterador.next());
+
+      for(let yi of iterador){
+        console.log(yi);
+      }
+      const arreglo=[...iterable()];
+      console.log(arreglo);*/
+      //--------------------------------------------------------Proxys------------------------------------------------------------------
+      /*El rpxy hace una vinculación entre el objeto original
+      y el objeto copia y atraves de su objeto especial manejador permite realizar validaciones 
+      antes de hacer la asignacion
+      const persona={
+        nombre:"",
+        apellido:"",
+        edad:0
+      }
+      const manejador={
+        set(obj,propiedad,valor){
+            if(Object.keys(obj).indexOf(propiedad)===-1){
+                return console.error(`"${propiedad}" esta propíedad no existe dentro del objeto persona.`);
+            }
+            obj[propiedad]=valor;
+        }
+      }
+      const brian= new Proxy(persona,manejador);
+      brian.nombre="Brian";
+      brian.apellido="Roldan";
+      brian.edad=23;
+      brian.face="Brian Roldan";
+
+      console.log(persona);
+      //------------------------------------------PROPIEDADES DINAMICAS DE LOS OBJETOS---------------------------------------------
+      let aleatorio=Math.round(Math.random()*100+5);
+      const usuarios={
+        propiedad:"Valor",
+        [`id_${aleatorio}`]:"Valor aleatorio"
+      };
+      console.log(usuarios);
+      const todosLosUsuarios=["Brian","Luis","Arturo","Esteban"];
+      todosLosUsuarios.forEach((todosLosUsuarios,index)=>usuarios[`id_${index}`]=todosLosUsuarios);
+      
+      console.log(usuarios);*/
+      
+      //------------------------------------------------------THIS------------------------------------------------------------------------------
+      /*
+      .THIS: Esta es una palabra que hace referencia a un objeto y poder invocar ciertos metodos y funciones.
+      Hace referencia al contexto en el que estamos ejecutando las cosas.
+      
+     console.log(this);
+     console.log(this===window);
+     
+     this.nombre="Global";
+     console.log(nombre);
+
+     function imprime(){
+        console.log(this.nombre);
+     }
+     imprime();
+
+     const objeto={
+        nombre:"Primer objeto",
+        imprime:function(){
+            console.log(this.nombre);
+        }
+     }
+     objeto.imprime();
+
+     const objeto2={
+        nombre:"Segundo Objeto",
+        imprime
+     }
+     objeto2.imprime();
+
+     //Las arrow function no aplican como metodo dentro de un objeto a comparación de los demas.
+     const objeto3={
+        nombre:"Tercer objeto"        ,
+        imprime:()=>{
+            console.log(this.nombre);
+        }
+     }
+     objeto3.imprime();
+
+     function Persona(nombre){
+        this.nombre=nombre;
+        //return console.log(this.nombre);
+        //return function(){ //Retorna el valor global y esto se soluciona con las arrow function 
+            //console.log(this.nombre,23);
+        //}
+        return ()=>{
+            console.log(this.nombre);
+        }
+     }
+     
+     let brian=new Persona("Brian Roldan Caballero");
+     brian();*/
+
+     //-------------------------------------------------CALL, APPLY, BIND ------------------------------------------------------
+     /*
+     Call: Desde un determinado objeto
+     Apply: Es igual que call
+     Bind: Enlaza
+     
+     this.lugar="Contexto global";
+     
+     const obj={
+        lugar:"Primero objeto",
+     }
+
+     const pais={
+        lugar:"China",
+     }
+
+     function saludar(aQuien){
+        console.log(`Hola  ${aQuien} desde ${this.lugar}`);
+     }
+     //Call y apply
+     saludar.call(obj,"Brian");
+     saludar.call(null,"Brian");
+     saludar.call(this,"Brian");
+     saludar.apply(pais,["Brian"]);//Apply recibe en objetos 
+     saludar.apply(null,["Breian"]);
+     saludar.apply(this,["Briasn"]);
+
+     //BIRD
+     this.nombre="Window";
+
+     const usuario={
+        nombre:"Brian",
+        saludar:function(){
+            console.log(`Hola ${this.nombre}`);
+        }
+     }
+     
+     usuario.saludar();
+
+     const persona={
+        saludar:usuario.saludar.bind(usuario)
+     }
+
+     persona.saludar();*/
+
+     //-------------------------------------------JSON.-------------------------------------------------------------
+     /*
+     JSON es un una interfaz de lenguaje que provee funciones de javaScript a una notación Json.
+
+     parse: Este metodo analiza una cadena de texto como JSON, transformandi opcionalmente el valor
+     producido por el analisis.
+        Sintaxis:
+            JSON.parse(text[,reviver])
+
+     stringify: Convierte un objeto o valor de JavaScript en una cadena de texto JSON, opcionalmente remplaza
+     valores si se indica una función de remplazo, o si se especifican las propiedades mediante un array de 
+     remplazo.
+        sintaxis:
+            console.log(JSON.stringify({x:5, y:6})); //expected ouput: "{"x":5,"y":6}"
+     
+     
+     console.log(JSON.parse("{}"));
+     console.log(JSON.parse("[]"));
+     console.log(JSON.parse("12345"));
+     console.log(JSON.parse("true"));
+     console.log(JSON.parse("false"));
+     console.log(JSON.parse("null"));
+
+     console.log(JSON.stringify({}));
+     console.log(JSON.stringify([]));
+     console.log(JSON.stringify(12345))
+     console.log(JSON.stringify(null));
+     console.log(JSON.stringify(undefined));
+     console.log(JSON.stringify(true));*/     
+     
+
+
+        </script>
+    </body>
+</html>

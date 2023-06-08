@@ -9,6 +9,40 @@
                 --yellow-color: yellow;
                 --dark-color: #222;
             }
+            .card {
+                display: inline-block;
+                background-color: #000;
+                color: yellow;
+                text-align: center;
+            }
+            
+            .cards{
+                padding: 1.5rem;
+                border: thin solid black ;
+            }
+
+            .card figcaption{
+                padding: 1rem;
+            }
+
+            .rotate-45{
+                transform: rotate(45deg);
+            }
+
+            .rotate-135{
+                transform: rotate(135deg);
+            }
+
+            .opacity-80{
+                opacity: 8;
+            }
+
+            .sepia{
+                filter: sepia(1);
+            }
+
+
+
         </style>
     </head>
     
@@ -81,9 +115,22 @@
             <figcaption>Music</figcaption>
         </figure>
 
+        <figure class="card">
+            <img src="https://placeimg.com/200/200/dance" alt="Dance">
+            <figcaption>Dance</figcaption>
+        </figure>
+
     </section>
+
+    <template id="templete-card">
+        <figure class="card">
+            <img>
+            <figcaption></figcaption>
+        </figure>
+    </template>
 
 
     <script src="js/dom.js"></script>
 </body>
 </html>
+
